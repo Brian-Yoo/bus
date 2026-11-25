@@ -3,7 +3,7 @@
 서울 버스 정류소(검색 또는 네이버 지도에서 주변 정류소 선택) → 노선별 1시간 이내 도착 버스를 보여주는 휴대폰 웹앱. 지하철 앱(D:\Trans, github.com/Brian-Yoo/trans)과 같은 구조. 사용자는 한국어로 소통.
 
 - 구조와 실행법은 README.md, 다른 PC 설정은 집에서_작업하기.md, 작업 정리는 docs/프로젝트_정리.md
-- GitHub 저장소·Vercel 프로젝트는 아직 없음 (만들면 여기에 주소 기록)
+- GitHub: https://github.com/Brian-Yoo/bus (main). Vercel 프로젝트는 아직 없음 (만들면 여기에 주소 기록)
 
 ## 규칙
 - 커밋 작성자 이메일은 `357139478+Brian-Yoo@users.noreply.github.com` (개인 이메일이면 GitHub가 push 거부, GH007)
