@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>버스 도착</title>
+  <meta name="description" content="정류소를 고르면 노선별로 1시간 안에 오는 버스를 보여줍니다.">
+  <meta name="theme-color" content="#13804f">
+  <link id="manifestLink" rel="manifest" href="/manifest.webmanifest">
+  <link id="faviconLink" rel="icon" href="/icons/icon-192.png">
+  <link id="appleIconLink" rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <script>
+    // 저장한 아이콘을 브라우저가 manifest를 읽기 전에 적용 (홈 화면 추가 시 이 아이콘이 쓰임)
+    try {
+      var ic = JSON.parse(localStorage.getItem('bus.icon') || 'null');
+      if (ic && typeof ic.base === 'string') {
+        document.getElementById('manifestLink').href = '/api/manifest?img=' + encodeURIComponent(ic.base);
+        document.getElementById('faviconLink').href = ic.base + '/192.png';
+        document.getElementById('appleIconLink').href = ic.base + '/180.png';
+      }
+    } catch (e) {}
+  </script>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="버스 도착">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/bus.css">
+</head>
+<body>
+  <header class="top">
+    <div class="bar">
+      <button id="homeBtn" class="brand" aria-label="처음 화면">🚌 버스 도착</button>
+      <button id="helpBtn" class="icon-btn help-btn" aria-label="사용 방법">?</button>
+      <button id="settingsBtn" class="icon-btn" aria-label="설정">⚙</button>
+    </div>
+    <div class="search-row">
+      <div class="search">
+        <input id="q" type="search" inputmode="search" autocomplete="off" placeholder="정류소 이름 또는 번호 (예: 강남역)" aria-label="정류소 이름">
+        <ul id="suggest" class="suggest" hidden></ul>
+      </div>
+      <button id="mapBtn" class="map-btn" aria-label="지도에서 주변 정류소 찾기">📍<span>지도</span></button>
+    </div>
+    <div id="favs" class="favs" hidden></div>
+  </header>
+
+  <main id="main">
+    <!-- 처음 화면: 저장한 정류소 바로가기 -->
+    <section id="home">
+      <h2 class="sec-title">자주 가는 정류소</h2>
+      <div id="quick" class="quick"></div>
+      <div id="quickEmpty" class="empty" hidden>
+        <p>자주 가는 정류소를 6개까지 저장해 두고<br>여기서 바로 열 수 있어요.</p>
+        <button id="quickSetup" class="primary">⚙ 설정에서 추가하기</button>
+      </div>
+      <button id="nearBtn" class="near-card">
+        <span class="near-ico">📍</span>
+        <span><b>내 주변 정류소 찾기</b><small>지도에서 가까운 정류소를 눌러 고르세요</small></span>
+      </button>
+      <p id="demoNote" class="warn demo-note" hidden></p>
+    </section>
+
+    <!-- 도착정보 화면 -->
+    <section id="result" hidden>
+      <div class="station-head">
+        <div class="stop-title">
+          <h1 id="stopName"></h1>
+          <p id="stopSub" class="stop-sub"></p>
+        </div>
+        <button id="favBtn" class="icon-btn" aria-label="자주 가는 정류소에 저장">☆</button>
+        <button id="refreshBtn" class="icon-btn" aria-label="새로고침">↻</button>
+      </div>
+      <div id="routeTabs" class="line-tabs route-tabs" role="tablist" aria-label="노선 선택"></div>
+      <p id="meta" class="meta"></p>
+      <p id="warn" class="warn" hidden></p>
+      <div id="groups"></div>
+    </section>
+
+    <p id="error" class="error" hidden></p>
+  </main>
+
+  <!-- 지도로 주변 정류소 찾기 -->
+  <div id="mapSheet" class="sheet map-sheet" hidden role="dialog" aria-modal="true" aria-labelledby="mapTitle">
+    <div class="sheet-head">
+      <h2 id="mapTitle">주변 정류소</h2>
+      <button id="mapClose" class="icon-btn" aria-label="닫기">✕</button>
+    </div>
+    <div class="map-wrap">
+      <div id="map" class="map"></div>
+      <p id="mapMsg" class="map-msg" hidden></p>
+      <button id="mapResearch" class="map-research" hidden>↻ 이 지역에서 다시 찾기</button>
+      <button id="myLocBtn" class="my-loc" aria-label="내 위치로">◎</button>
+    </div>
+    <div class="map-panel">
+      <div id="mapPick" class="map-pick" hidden></div>
+      <p id="mapListTitle" class="map-list-title"></p>
+      <ul id="mapList" class="map-list"></ul>
+    </div>
+  </div>
+
+  <!-- 설정 -->
+  <div id="settings" class="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="sheet-head">
+      <h2 id="settingsTitle">설정</h2>
+      <button id="settingsClose" class="icon-btn" aria-label="닫기">✕</button>
+    </div>
+    <div class="sheet-body">
+      <section class="card">
+        <h3>아이콘 이미지 변경</h3>
+        <p class="desc">휴대폰 사진으로 홈 화면 아이콘을 만들 수 있어요.</p>
+        <div class="icon-edit">
+          <img id="iconCurrent" class="icon-preview" alt="현재 아이콘" width="96" height="96">
+          <div class="icon-btns">
+            <button id="photoBtn" class="primary">📷 사진 선택</button>
+            <button id="iconReset" class="ghost">기본 아이콘으로</button>
+          </div>
+        </div>
+        <input id="photoInput" type="file" accept="image/*" hidden>
+        <div id="cropBox" class="crop-box" hidden>
+          <p class="desc">✋ 끌어서 위치 이동 · 🤏 두 손가락으로 크기 조절<br>틀 안에 보이는 부분이 아이콘이 됩니다.</p>
+          <div id="cropFrame" class="crop-frame">
+            <canvas id="cropCanvas" class="crop" width="512" height="512"></canvas>
+            <div class="crop-grid" aria-hidden="true"></div>
+          </div>
+          <div class="zoom">
+            <button id="zoomOut" class="mini" aria-label="작게">−</button>
+            <input id="cropZoom" type="range" min="0.5" max="5" step="0.01" value="1" aria-label="사진 크기">
+            <button id="zoomIn" class="mini" aria-label="크게">＋</button>
+          </div>
+          <div class="crop-tools">
+            <button id="rotateBtn" class="ghost">↻ 회전</button>
+            <button id="zoomFit" class="ghost">전체 보기</button>
+            <button id="zoomFill" class="ghost">꽉 채우기</button>
+          </div>
+          <div class="crop-bg">
+            <span>빈 곳 색</span>
+            <div id="cropBgs" class="icon-colors">
+              <button class="swatch on" data-bg="#ffffff" style="background:#ffffff" aria-label="흰색"></button>
+              <button class="swatch" data-bg="#000000" style="background:#000000" aria-label="검정"></button>
+              <button class="swatch" data-bg="#eef1f6" style="background:#eef1f6" aria-label="연회색"></button>
+              <button class="swatch" data-bg="#13804f" style="background:#13804f" aria-label="초록"></button>
+              <button class="swatch" data-bg="#f5f0e6" style="background:#f5f0e6" aria-label="아이보리"></button>
+            </div>
+          </div>
+          <div class="icon-actions">
+            <button id="cropSave" class="primary">이 사진으로 저장</button>
+            <button id="cropCancel" class="ghost">취소</button>
+          </div>
+        </div>
+        <p id="iconNote" class="desc note-box" hidden></p>
+      </section>
+
+      <section class="card">
+        <h3>홈 화면에 아이콘 저장</h3>
+        <p id="installMsg" class="desc"></p>
+        <button id="installBtn" class="primary" hidden>📲 홈 화면에 아이콘 추가</button>
+        <ol id="installSteps" class="steps" hidden></ol>
+      </section>
+
+      <section class="card">
+        <h3>자주 가는 정류소 <span id="favCount" class="count"></span></h3>
+        <p class="desc">처음 화면에 바로가기로 표시됩니다. 최대 6개.</p>
+        <div id="addBox" class="add-box">
+          <div class="search-row">
+            <div class="search">
+              <input id="sq" type="search" autocomplete="off" placeholder="① 정류소 이름 검색" aria-label="추가할 정류소 이름">
+              <ul id="ssuggest" class="suggest" hidden></ul>
+            </div>
+            <button id="addMapBtn" class="map-btn" aria-label="지도에서 정류소 고르기">📍<span>지도</span></button>
+          </div>
+          <div id="addPicked" hidden>
+            <p class="picked">② <b id="addStop"></b> <span id="addDir" class="muted-s"></span><br>볼 노선을 고르세요 (전체도 가능)</p>
+            <div id="addRoutes" class="line-tabs route-tabs"></div>
+          </div>
+          <button id="addBtn" class="primary" disabled>③ 저장</button>
+        </div>
+        <p id="addFull" class="desc" hidden>6개가 모두 찼어요. 아래 목록에서 하나를 지우면 추가할 수 있어요.</p>
+
+        <ul id="favList" class="fav-list"></ul>
+      </section>
+    </div>
+  </div>
+
+  <!-- 사용 방법 -->
+  <div id="help" class="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+    <div class="sheet-head">
+      <h2 id="helpTitle">사용 방법</h2>
+      <button id="helpClose" class="icon-btn" aria-label="닫기">✕</button>
+    </div>
+    <div class="sheet-body">
+      <section class="card">
+        <h3>🚏 정류소 찾기</h3>
+        <p class="desc">같은 이름의 정류소가 길 양쪽에 따로 있어요. <b>→ 다음 정류장 방면</b>과 <b>정류소 번호</b>(5자리)를 보고 고르세요.</p>
+        <h4 class="help-sub">방법 1. 지도에서 고르기 (추천)</h4>
+        <ol class="steps">
+          <li>검색창 옆 <b>📍 지도</b>를 누릅니다.</li>
+          <li>위치 권한을 <b>허용</b>하면 내 위치(파란 점)와 주변 정류소가 보입니다.</li>
+          <li>정류소 핀이나 아래 목록을 누르면 방향과 노선이 나오고, <b>이 정류소 보기</b>를 누릅니다.</li>
+          <li>지도를 옮긴 뒤 <b>↻ 이 지역에서 다시 찾기</b>로 다른 곳도 찾을 수 있어요.</li>
+        </ol>
+        <h4 class="help-sub">방법 2. 이름으로 검색</h4>
+        <ol class="steps">
+          <li>위 검색창에 정류소 이름(예: 강남역)이나 번호(예: 22009)를 입력합니다.</li>
+          <li>결과 오른쪽 <b>📍</b>를 누르면 지도에서 위치를 확인할 수 있어요.</li>
+        </ol>
+      </section>
+
+      <section class="card">
+        <h3>🚌 도착 화면 보는 법</h3>
+        <ol class="steps">
+          <li>노선마다 <b>다음 버스 2대</b> 중 1시간 안에 오는 버스를 보여줍니다.</li>
+          <li>위쪽 노선 버튼으로 <b>한 노선만</b> 골라 볼 수 있어요.</li>
+          <li>30초마다 자동으로 새로고침됩니다.</li>
+        </ol>
+      </section>
+
+      <section class="card">
+        <h3>📲 홈 화면에 앱 설치</h3>
+        <p class="desc">설치하면 바탕화면 아이콘으로 앱처럼 바로 열 수 있어요.</p>
+        <h4 class="help-sub">안드로이드 (Chrome)</h4>
+        <ol class="steps">
+          <li>⚙ 설정 → <b>홈 화면에 아이콘 추가</b> 버튼을 누릅니다.</li>
+          <li>버튼이 없으면 Chrome 오른쪽 위 <b>⋮</b> → <b>홈 화면에 추가</b>(또는 <b>앱 설치</b>)를 누릅니다.</li>
+        </ol>
+        <h4 class="help-sub">삼성 인터넷</h4>
+        <ol class="steps">
+          <li>아래쪽 <b>≡</b> 메뉴 → <b>현재 페이지 추가</b> → <b>홈 화면</b>을 누릅니다.</li>
+        </ol>
+        <h4 class="help-sub">아이폰 (Safari)</h4>
+        <ol class="steps">
+          <li>아래쪽 <b>공유 버튼(□↑)</b>을 누릅니다.</li>
+          <li><b>홈 화면에 추가</b> → <b>추가</b>를 누릅니다.</li>
+        </ol>
+        <p class="note">아이콘을 내 사진으로 바꾸고 싶으면 ⚙ 설정 → <b>아이콘 이미지 변경</b>을 먼저 한 뒤 설치하세요. 이미 설치했다면 아이콘을 지우고 다시 추가해야 바뀝니다.</p>
+      </section>
+
+      <section class="card">
+        <h3>⭐ 자주 가는 정류소 설정</h3>
+        <p class="desc">최대 6개까지 저장하면 첫 화면에서 한 번에 열 수 있어요.</p>
+        <h4 class="help-sub">방법 1. 설정에서 추가</h4>
+        <ol class="steps">
+          <li>오른쪽 위 <b>⚙</b> 를 누릅니다.</li>
+          <li><b>자주 가는 정류소</b>에서 ① 이름 검색 또는 <b>📍 지도</b>로 정류소 선택 → ② 노선 선택(전체 가능) → ③ <b>저장</b>.</li>
+          <li>목록의 ▲ ▼ 로 순서를 바꾸고, ✕ 로 지웁니다.</li>
+        </ol>
+        <h4 class="help-sub">방법 2. 도착 화면에서 바로 저장</h4>
+        <ol class="steps">
+          <li>정류소를 열고, 필요하면 노선을 고릅니다.</li>
+          <li>정류소 이름 옆 <b>☆</b> 를 누르면 <b>★</b> 로 바뀌며 저장됩니다.</li>
+        </ol>
+      </section>
+      <button id="helpToSettings" class="primary help-go">⚙ 설정 열기</button>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="/app.js" type="module"></script>
+</body>
+</html>

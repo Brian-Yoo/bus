@@ -1,0 +1,23 @@
+{
+  "outputDirectory": "public",
+  "regions": [
+    "icn1"
+  ],
+  "headers": [
+    {
+      "source": "/sw.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/icon-img/:id/:size.png",
+      "destination": "/api/icon-img?id=:id&size=:size"
+    }
+  ]
+}

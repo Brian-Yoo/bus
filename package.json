@@ -1,0 +1,17 @@
+{
+  "name": "bus-arrivals",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "서울 버스 정류소의 노선별 1시간 이내 도착 예정 버스를 보여주는 웹앱(PWA)",
+  "scripts": {
+    "dev": "node --use-env-proxy server.js",
+    "icons": "node scripts/make-icons.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@vercel/blob": "^2.9.0"
+  }
+}

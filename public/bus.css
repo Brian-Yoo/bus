@@ -1,0 +1,162 @@
+/* =====================================================================
+   버스 앱 전용 스타일 (공통 스타일은 style.css, 지하철 앱과 같음)
+   ===================================================================== */
+:root { --pin: #13804f; --me: #1a73e8; }
+
+/* 검색창 + 📍 지도 버튼 */
+.search-row { display: flex; gap: 8px; align-items: flex-start; }
+.search-row .search { flex: 1; min-width: 0; }
+.map-btn {
+  flex: none; height: 48px; min-width: 56px; padding: 0 10px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  border: 1px solid var(--line); background: var(--card); border-radius: 12px; cursor: pointer;
+  font-size: 18px; line-height: 1.1;
+}
+.map-btn span { font-size: 11px; font-weight: 700; color: var(--accent); }
+.add-box .map-btn { height: 46px; }
+.suggest .ars, .stop-sub .ars, .map-pick .ars {
+  font-size: 12px; font-weight: 700; color: var(--muted);
+  background: var(--tt-bg); padding: 1px 6px; border-radius: 6px; font-variant-numeric: tabular-nums;
+}
+.suggest .twin { font-size: 11px; color: var(--warn); }
+.suggest .li-map {
+  margin-left: auto; border: 1px solid var(--line); background: var(--bg);
+  border-radius: 8px; width: 34px; height: 30px; cursor: pointer; font-size: 15px;
+}
+
+/* 처음 화면 */
+.q-dir { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.q-name { font-size: 19px; line-height: 1.2; word-break: keep-all; }
+.near-card {
+  display: flex; align-items: center; gap: 12px; width: 100%; margin-top: 14px;
+  padding: 14px 16px; text-align: left; cursor: pointer;
+  background: var(--card); border: 1px dashed var(--accent); border-radius: 14px;
+}
+.near-card .near-ico { font-size: 26px; }
+.near-card b { display: block; font-size: 16px; color: var(--accent); }
+.near-card small { color: var(--muted); font-size: 13px; }
+.demo-note { margin-top: 14px; }
+.center { text-align: center; }
+
+/* 도착 화면 머리 */
+.stop-title { flex: 1; min-width: 0; }
+.station-head h1 { font-size: 22px; line-height: 1.25; word-break: keep-all; }
+.stop-sub { margin: 2px 0 0; font-size: 13px; color: var(--muted); }
+.stop-sub b { color: var(--text); }
+
+/* 노선 버튼: 한 줄로 옆으로 밀기 */
+.route-tabs { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+.route-tabs::-webkit-scrollbar { display: none; }
+.route-tabs .line-tab { flex: none; padding: 6px 12px; font-size: 14px; }
+#addRoutes { flex-wrap: wrap; overflow: visible; }
+.muted-s { color: var(--muted); font-size: 13px; font-weight: 500; }
+
+/* 노선 카드 */
+.route-card {
+  --c: var(--accent);
+  background: var(--card); border: 1px solid var(--line); border-left: 5px solid var(--c);
+  border-radius: 14px; margin-bottom: 10px; overflow: hidden;
+}
+.rc-head { display: flex; align-items: baseline; gap: 6px; padding: 8px 12px 2px; min-width: 0; }
+.rno { font-size: 20px; font-weight: 800; color: var(--c, var(--accent)); white-space: nowrap; }
+.rtype { font-size: 11px; font-weight: 700; color: #fff; background: var(--c); padding: 0 6px; border-radius: 999px; flex: none; }
+.rdir { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.rc-buses { display: grid; grid-template-columns: 1fr 1fr; }
+.bus { display: flex; align-items: center; gap: 8px; padding: 6px 12px 10px; min-width: 0; }
+.bus + .bus { border-left: 1px dashed var(--line); }
+.bus .eta { width: auto; min-width: 44px; font-size: 22px; line-height: 1.1; display: block; }
+.bus .eta.now { font-size: 15px; color: var(--err); font-weight: 800; }
+.bus .info { min-width: 0; }
+.bus .sub { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bus .tags { display: flex; gap: 3px; margin-top: 2px; }
+.bus .tags:empty { display: none; }
+.bus .tag { margin-left: 0; font-size: 10px; }
+.tag.low { color: var(--me); }
+.empty-bus { color: var(--muted); font-size: 12px; }
+
+/* 1시간 안에 안 오는 노선 */
+.idle { margin-top: 6px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 4px 12px; }
+.idle summary { cursor: pointer; padding: 8px 0; color: var(--muted); font-size: 14px; font-weight: 600; }
+.idle-list { list-style: none; margin: 0; padding: 0 0 6px; }
+.idle-list li { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-top: 1px solid var(--line); font-size: 13px; }
+.rno.sm { font-size: 15px; min-width: 56px; }
+.why { color: var(--muted); }
+
+/* ---------- 지도 시트 ---------- */
+.map-sheet .sheet-head { padding: 8px 12px; }
+.map-wrap { position: relative; flex: 1 1 55%; min-height: 200px; background: var(--tt-bg); }
+/* 네이버 지도가 #map에 position:relative를 직접 넣으므로 inset 대신 크기를 100%로 지정 */
+.map-wrap { display: flex; }
+.map { flex: 1; width: 100%; height: 100%; min-height: 200px; }
+.map-sheet.no-map .map-wrap { flex: 0 0 auto; min-height: 0; background: none; }
+.map-sheet.no-map .my-loc, .map-sheet.no-map .map-research { display: none; }
+.map-sheet.no-map .map-msg { position: static; margin: 10px 12px 0; }
+.map-msg {
+  position: absolute; left: 10px; right: 10px; top: 10px; z-index: 5; margin: 0;
+  background: var(--warn-bg); color: var(--warn); padding: 8px 12px; border-radius: 10px; font-size: 13px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.12);
+}
+.map-research {
+  position: absolute; left: 50%; transform: translateX(-50%); bottom: 14px; z-index: 5;
+  border: 0; background: var(--card); color: var(--accent); font-weight: 700; font-size: 14px;
+  padding: 9px 16px; border-radius: 999px; box-shadow: 0 3px 12px rgba(0,0,0,.22); cursor: pointer; white-space: nowrap;
+}
+.my-loc {
+  position: absolute; right: 12px; bottom: 14px; z-index: 5;
+  width: 44px; height: 44px; border-radius: 50%; border: 0; cursor: pointer;
+  background: var(--card); color: var(--me); font-size: 22px; box-shadow: 0 3px 12px rgba(0,0,0,.22);
+}
+.map-panel {
+  flex: 1 1 45%; overflow-y: auto; background: var(--bg);
+  border-top: 1px solid var(--line); padding: 10px 12px calc(16px + env(safe-area-inset-bottom));
+}
+.map-sheet.no-map .map-panel { flex: 1; border-top: 0; }
+.map-list-title { margin: 2px 2px 6px; font-size: 13px; color: var(--muted); font-weight: 600; }
+.map-list { list-style: none; margin: 0; padding: 0; }
+.map-list li {
+  display: flex; align-items: center; gap: 8px; padding: 10px 12px; margin-bottom: 6px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px; cursor: pointer;
+}
+.map-list li.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+.map-list li.muted { color: var(--muted); cursor: default; font-size: 14px; }
+.ml-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.ml-main b { font-size: 15px; }
+.ml-main small { color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ml-dist { flex: none; font-size: 12px; color: var(--muted); font-weight: 600; }
+
+.map-pick {
+  background: var(--card); border: 2px solid var(--accent); border-radius: 14px;
+  padding: 12px; margin-bottom: 10px;
+}
+.mp-head { display: flex; align-items: center; gap: 8px; }
+.mp-head b { font-size: 17px; }
+.mp-head .ml-dist { margin-left: auto; }
+.mp-dir { margin: 4px 0 6px; font-size: 14px; color: var(--muted); }
+.mp-dir b { color: var(--text); }
+.mp-routes { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+.mp-routes .more { font-size: 12px; color: var(--muted); align-self: center; }
+.map-pick .primary { width: 100%; }
+
+/* 지도 위 핀 (네이버 지도 마커 안의 HTML) */
+.pin { position: relative; width: 30px; height: 30px; cursor: pointer; }
+.pin-ico {
+  position: absolute; left: 0; top: 0; width: 30px; height: 30px;
+  background: #fff; border: 2px solid var(--pin); border-radius: 50% 50% 50% 0; transform: rotate(-45deg);
+  box-shadow: 0 2px 5px rgba(0,0,0,.3);
+  display: flex; align-items: center; justify-content: center; font-size: 0;
+}
+.pin-ico::after { content: '🚏'; font-size: 14px; transform: rotate(45deg); }
+.pin.on .pin-ico { background: var(--pin); border-color: #fff; }
+.pin-label {
+  position: absolute; left: 50%; bottom: 36px; transform: translateX(-50%);
+  white-space: nowrap; background: var(--pin); color: #fff; font-size: 12px; font-weight: 700;
+  padding: 3px 8px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,.25);
+}
+.me-dot {
+  width: 22px; height: 22px; border-radius: 50%; background: var(--me); border: 4px solid #fff;
+  box-shadow: 0 0 0 6px rgba(26,115,232,.25), 0 1px 4px rgba(0,0,0,.3);
+}
+
+/* 설정 목록 */
+.fav-name small { display: block; color: var(--muted); font-weight: 500; font-size: 12px; }
+#sq { height: 46px; }
