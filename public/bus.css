@@ -54,7 +54,7 @@
 /* 노선 카드: 한 줄 (노선 | 첫 버스 | 둘째 버스) */
 .route-card {
   --c: var(--accent);
-  display: grid; grid-template-columns: 78px 1fr; align-items: center;
+  display: grid; grid-template-columns: 1fr 2fr; align-items: center; /* 노선 1/3, 버스 두 칸 1/3씩 */
   background: var(--card); border: 1px solid var(--line); border-left: 5px solid var(--c);
   border-radius: 12px; margin-bottom: 6px; overflow: hidden; padding: 5px 0;
 }
