@@ -18,5 +18,7 @@
 - 네이버 지도: NCP Maps Dynamic Map, `maps.js?ncpKeyId=` (Client ID만, `NAVER_MAP_CLIENT_ID`). Web 서비스 URL 등록한 주소에서만 동작, 실패 시 `navermap_authFailure` → 목록만 표시. 등록된 주소: localhost:3000, localhost:3001, bus-three-xi.vercel.app (포트 구분)
 - 네이버 지도가 #map에 position:relative를 넣으므로 크기는 width/height 100%로 (inset 쓰면 높이 0)
 - `/api/config`는 브라우저 캐시 금지 (키를 바꿨을 때 바로 반영되게)
-- 사진 아이콘: Vercel Blob 비공개 저장소, 지하철 앱과 같은 코드
+- 사진 아이콘: Vercel Blob 비공개 저장소 `bus-icons` (bus 프로젝트에 연결, `BLOB_STORE_ID`), 지하철 앱과 같은 코드
+- 도착 표시 범위: 1시간 (`lib/bus.js` WINDOW_MIN, `public/app.js` WINDOW_SEC 두 곳을 같이 바꿀 것)
+- 환경변수만 바꿨으면 빈 커밋 push로 재배포. Vercel 대시보드 조작은 사용자가 직접(로그인·권한·Deploy 버튼·키 값 입력)
 - 회사 PC는 HTTP 프록시 환경이라 `npm run dev`가 `node --use-env-proxy` 사용 (Node 24+ 필요)

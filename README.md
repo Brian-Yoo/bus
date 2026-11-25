@@ -54,7 +54,7 @@ server.js        로컬 개발 서버
    - API 선택: **Dynamic Map** 체크
    - **Web 서비스 URL**에 아래 주소를 모두 추가
      - `http://localhost:3000`, `http://localhost:3001` (내 PC에서 테스트용, 포트까지 구분함)
-     - `https://<Vercel 배포 주소>` (예: `https://bus-xxxx.vercel.app`)
+     - `https://bus-three-xi.vercel.app` (배포 주소)
 4. 등록한 Application의 **인증 정보**에서 **Client ID**를 복사 → `NAVER_MAP_CLIENT_ID`에 넣기
    - Client Secret은 필요 없습니다.
 5. 등록하지 않은 주소에서 열면 "네이버 지도 인증에 실패했어요" 안내가 뜨고 목록만 보입니다. 이때는 3번의 URL을 확인하세요.
@@ -79,17 +79,29 @@ NAVER_MAP_CLIENT_ID=네이버 클라우드 Maps Client ID
 키를 바꾼 뒤에는 `npm run dev`를 껐다 켜야 합니다.
 3000번 포트가 이미 쓰이고 있으면(예: 지하철 앱 실행 중) 3001번 등 다른 포트로 열립니다. 네이버 지도는 등록한 주소(포트 포함)에서만 되므로, 그 포트도 Web 서비스 URL에 등록해 두세요.
 
-## 4. 배포 (Vercel, 무료)
+## 4. 배포 (Vercel, 무료) — 완료
 
-1. GitHub에 새 저장소 만들기 (예: `Brian-Yoo/bus`) → 이 폴더를 push
-2. <https://vercel.com> → **Add New → Project** → 저장소 선택 → Framework Preset: **Other** → Deploy
-3. **Settings → Environment Variables**에 `BUS_API_KEY`, `NAVER_MAP_CLIENT_ID` 추가 → 다시 배포 (빈 커밋 push)
-4. 배포 주소를 네이버 클라우드 Maps Application의 **Web 서비스 URL**에 추가
+- 배포 주소: **https://bus-three-xi.vercel.app**
+- Vercel 팀 `trans` → 프로젝트 `bus` (https://vercel.com/trans13/bus). GitHub `main`에 push하면 자동 배포
+- 환경변수: `BUS_API_KEY`, `NAVER_MAP_CLIENT_ID` (Settings → Environment Variables), `BLOB_STORE_ID`(Blob 연결 시 자동 생성)
+- 사진 아이콘 저장소: Vercel Blob `bus-icons` (비공개, bus 프로젝트에 연결됨)
+- 네이버 지도 Web 서비스 URL: `http://localhost:3000`, `http://localhost:3001`, `https://bus-three-xi.vercel.app`
 
-## 4-1. 사진 아이콘 저장소 설정 (최초 1회)
+처음부터 다시 만들 때의 순서 (참고용):
+1. GitHub 저장소를 만들고 push
+2. <https://vercel.com/new> → 저장소 옆 **Import**
+   - 목록에 저장소가 없으면 **Configure GitHub App**(또는 Adjust GitHub App Permissions)에서 그 저장소 접근 허용
+3. Application Preset을 **Other**로 변경 ("Possible configuration mismatch" 경고는 무시해도 됨)
+4. **Environment Variables**에 두 키 입력 → **Deploy**
+5. 배포 주소를 네이버 클라우드 Maps의 **Web 서비스 URL**에 추가
+6. 프로젝트 → **Storage → Create Storage → Blob** (비공개, 접두어 `BLOB`) → 프로젝트 화면에서 만들면 자동 연결됨 → 다시 배포 (빈 커밋 push)
 
-지하철 앱과 같습니다. Vercel → 프로젝트 → **Storage → Create Database → Blob** → 프로젝트 연결(접두어 `BLOB` 그대로) → 다시 배포.
-비공개 저장소여도 됩니다. 로컬에서는 `.local-uploads/` 폴더에 저장됩니다.
+환경변수만 바꿨을 때는 다시 배포해야 반영됩니다. Redeploy 버튼을 찾기 어려우면 빈 커밋을 push하세요:
+
+```powershell
+git commit --allow-empty -m "재배포"
+git push
+```
 
 ## 5. 휴대폰 홈 화면에 추가
 
