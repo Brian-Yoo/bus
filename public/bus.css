@@ -51,28 +51,27 @@
 #addRoutes { flex-wrap: wrap; overflow: visible; }
 .muted-s { color: var(--muted); font-size: 13px; font-weight: 500; }
 
-/* 노선 카드 */
+/* 노선 카드: 한 줄 (노선 | 첫 버스 | 둘째 버스) */
 .route-card {
   --c: var(--accent);
+  display: grid; grid-template-columns: 78px 1fr; align-items: center;
   background: var(--card); border: 1px solid var(--line); border-left: 5px solid var(--c);
-  border-radius: 14px; margin-bottom: 10px; overflow: hidden;
+  border-radius: 12px; margin-bottom: 6px; overflow: hidden; padding: 5px 0;
 }
-.rc-head { display: flex; align-items: baseline; gap: 6px; padding: 8px 12px 2px; min-width: 0; }
+.rc-head { display: flex; flex-direction: column; padding: 0 4px 0 9px; min-width: 0; }
 .rno { font-size: 20px; font-weight: 800; color: var(--c, var(--accent)); white-space: nowrap; }
-.rtype { font-size: 11px; font-weight: 700; color: #fff; background: var(--c); padding: 0 6px; border-radius: 999px; flex: none; }
-.rdir { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
-.rc-buses { display: grid; grid-template-columns: 1fr 1fr; }
-.bus { display: flex; align-items: center; gap: 8px; padding: 6px 12px 10px; min-width: 0; }
-.bus + .bus { border-left: 1px dashed var(--line); }
-.bus .eta { width: auto; min-width: 44px; font-size: 22px; line-height: 1.1; display: block; }
-.bus .eta.now { font-size: 15px; color: var(--err); font-weight: 800; }
-.bus .info { min-width: 0; }
-.bus .sub { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.bus .tags { display: flex; gap: 3px; margin-top: 2px; }
-.bus .tags:empty { display: none; }
-.bus .tag { margin-left: 0; font-size: 10px; }
+.rc-head .rno { font-size: 18px; line-height: 1.15; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.3px; }
+.rdir { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; line-height: 1.3; }
+.rc-buses { display: grid; grid-template-columns: 1fr 1fr; min-width: 0; }
+.bus { padding: 0 8px; min-width: 0; border-left: 1px dashed var(--line); }
+.bus .b1 { display: flex; align-items: center; gap: 4px; min-width: 0; height: 23px; }
+.bus .eta { width: auto; font-size: 19px; line-height: 1; display: inline; }
+.bus .eta small { font-size: 11px; }
+.bus .eta.now { font-size: 14px; color: var(--err); font-weight: 800; line-height: 1; }
+.bus .sub { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; }
+.bus .tag { margin-left: 0; font-size: 10px; line-height: 1.4; padding: 0 3px; flex: none; }
 .tag.low { color: var(--me); }
-.empty-bus { color: var(--muted); font-size: 12px; }
+.empty-bus { display: flex; align-items: center; color: var(--muted); font-size: 12px; }
 
 /* 1시간 안에 안 오는 노선 */
 .idle { margin-top: 6px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 4px 12px; }

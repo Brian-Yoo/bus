@@ -1,5 +1,5 @@
 // 앱 화면(정적 파일)은 캐시해서 빠르게 열고, 도착정보(/api)는 항상 네트워크에서 가져옴
-const CACHE = 'bus-v4';
+const CACHE = 'bus-v5';
 const SHELL = ['/', '/index.html', '/style.css', '/bus.css', '/app.js', '/manifest.webmanifest', '/icons/icon-192.png'];
 
 self.addEventListener('install', (e) => {

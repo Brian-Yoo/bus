@@ -385,16 +385,16 @@ function render() {
   if (!active.length) html += `<p class="none center">앞으로 1시간 안에 오는 ${routeSel ? esc(routeSel) + '번 ' : ''}버스가 없습니다.</p>`;
   for (const { r, buses, within } of active) {
     html += `<article class="route-card" style="--c:${esc(r.color)}">
-      <div class="rc-head"><span class="rno">${esc(r.name)}</span><span class="rtype">${esc(r.type)}</span>` +
-      `<span class="rdir">${r.towards ? esc(r.towards) + ' 방면' : ''}</span></div>
+      <div class="rc-head"><span class="rno">${esc(r.name)}</span>` +
+      `<span class="rdir">${r.towards ? esc(r.towards) + ' 방면' : esc(r.type)}</span></div>
       <div class="rc-buses">`;
     for (let i = 0; i < 2; i++) {
       const b = within[i];
       if (b) {
         const e = etaHtml(b.eta);
-        html += `<div class="bus"><div class="eta ${e.cls}"><span class="t">${e.html}</span></div>
-          <div class="info"><div class="sub">${esc(busSub(b)) || '&nbsp;'}</div>
-          <div class="tags">${b.lowFloor ? '<span class="tag low">저상</span>' : ''}${b.last ? '<span class="tag last">막차</span>' : ''}</div></div></div>`;
+        html += `<div class="bus"><div class="b1"><span class="eta ${e.cls}">${e.html}</span>` +
+          `${b.lowFloor ? '<span class="tag low">저상</span>' : ''}${b.last ? '<span class="tag last">막차</span>' : ''}</div>
+          <div class="sub">${esc(busSub(b)) || '&nbsp;'}</div></div>`;
       } else {
         const other = buses[i];
         const txt = other?.eta != null ? `다음 약 ${Math.round(other.eta / 60)}분` : other?.status || (r.term ? `배차 ${r.term}분` : '–');
