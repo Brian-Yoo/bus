@@ -3,7 +3,8 @@
 서울 버스 정류소(검색 또는 네이버 지도에서 주변 정류소 선택) → 노선별 1시간 이내 도착 버스를 보여주는 휴대폰 웹앱. 지하철 앱(D:\Trans, github.com/Brian-Yoo/trans)과 같은 구조. 사용자는 한국어로 소통.
 
 - 구조와 실행법은 README.md, 다른 PC 설정은 집에서_작업하기.md, 작업 정리는 docs/프로젝트_정리.md
-- GitHub: https://github.com/Brian-Yoo/bus (main). Vercel 프로젝트는 아직 없음 (만들면 여기에 주소 기록)
+- GitHub: https://github.com/Brian-Yoo/bus (main). push = Vercel 자동 배포
+- 배포: https://bus-three-xi.vercel.app (Vercel 팀 trans13, 프로젝트 bus). 변경 후 배포 사이트에서도 확인할 것
 
 ## 규칙
 - 커밋 작성자 이메일은 `357139478+Brian-Yoo@users.noreply.github.com` (개인 이메일이면 GitHub가 push 거부, GH007)
@@ -14,7 +15,7 @@
 ## 알아둘 점
 - 버스 API: 공공데이터포털 "서울특별시_정류소정보조회 서비스"(ws.bus.go.kr/api/rest/stationinfo, http). 키 `BUS_API_KEY` (Encoding/Decoding 둘 다 처리). 키가 없거나 `sample`이면 lib/mock.js 예시 데이터
   - getStationByName(이름 검색), getStationByPos(주변, tmX=경도 tmY=위도), getStationByUid(arsId 도착정보)
-- 네이버 지도: NCP Maps Dynamic Map, `maps.js?ncpKeyId=` (Client ID만, `NAVER_MAP_CLIENT_ID`). Web 서비스 URL 등록한 주소에서만 동작, 실패 시 `navermap_authFailure` → 목록만 표시. 등록된 로컬 주소: localhost:3000, localhost:3001 (포트 구분)
+- 네이버 지도: NCP Maps Dynamic Map, `maps.js?ncpKeyId=` (Client ID만, `NAVER_MAP_CLIENT_ID`). Web 서비스 URL 등록한 주소에서만 동작, 실패 시 `navermap_authFailure` → 목록만 표시. 등록된 주소: localhost:3000, localhost:3001, bus-three-xi.vercel.app (포트 구분)
 - 네이버 지도가 #map에 position:relative를 넣으므로 크기는 width/height 100%로 (inset 쓰면 높이 0)
 - `/api/config`는 브라우저 캐시 금지 (키를 바꿨을 때 바로 반영되게)
 - 사진 아이콘: Vercel Blob 비공개 저장소, 지하철 앱과 같은 코드
